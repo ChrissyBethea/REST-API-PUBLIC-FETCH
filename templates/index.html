@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Active Safety Systems</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #e5e5e5;
+        }
+        #status {
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vehicle Active Safety Systems</h1>
+
+    <button onclick="loadItems()">Load Safety Systems</button>
+    <p id="status">Click the button to load vehicle data.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Group Name</th>
+            </tr>
+        </thead>
+        <tbody id="results"></tbody>
+    </table>
+
+    <script>
+        async function loadItems() {
+            const status = document.getElementById("status");
+            const results = document.getElementById("results");
+
+            status.textContent = "Loading vehicle data...";
+            results.innerHTML = "";
+
+            try {
+                const response = await fetch("/items");
+
+                if (!response.ok) {
+                    throw new Error("HTTP error: " + response.status);
+                }
+
+                const data = await response.json();
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    [item.ID, item.Name, item.GroupName].forEach(value => {
+                        const cell = document.createElement("td");
+                        cell.textContent = value ?? "";
+                        row.appendChild(cell);
+                    });
+
+                    results.appendChild(row);
+                });
+
+                status.textContent =
+                    "Successfully loaded " + data.length + " safety systems.";
+
+            } catch (error) {
+                status.textContent =
+                    "Error loading vehicle data: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
